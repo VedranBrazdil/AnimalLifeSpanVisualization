@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Average Animal Life Span</title>
+	<meta charset="UTF-8"> 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" type="text/javascript"></script>
+</head>
+
+<style>
+
+body {
+    font: 16px Arial;
+    color: rgb(159, 190, 223);
+    height: 800px;
+
+    background-color:  rgb(102, 150, 204);
+    
+}
+
+
+
+circle { 
+    fill: rgb(38, 74, 109);
+    stroke: rgb(15, 39, 61);
+    stroke-width: 3px;
+}
+
+div.tooltip {   
+    position: absolute;         
+    text-align: left;               
+    padding: 15px;              
+    font: 12px sans-serif;      
+    background: lightsteelblue; 
+    border: 0px;        
+    border-radius: 40px;            
+    pointer-events: none;
+    display: inline-block;
+
+    color: black;
+    min-width: 120px;
+        
+}
+
+div.under {   
+
+    width: 200px;
+
+    display: none;
+    text-align: left;
+    font-size: 18px;
+    font-family: Georgia, serif;
+    padding: 15px;
+    border: 3px solid steelblue;
+
+    background-color: lightsteelblue;
+    border-radius: 8px;
+
+    position: absolute;
+
+    color: black;
+        
+}
+
+</style>
+
+
+<body>
+<script>
+
+
+AnimalDataBase = [
+{"Animals":"Ant (Worker)","Xaks":1,"Yaks":1},
+{"Animals":"Bee (Worker)","Xaks":1,"Yaks":1},
+{"Animals":"Mosquitofish","Xaks":2,"Yaks":1},
+{"Animals":"American Newt","Xaks":3,"Yaks":1},
+{"Animals":"Anole","Xaks":3,"Yaks":1},
+{"Animals":"Ant (Queen)","Xaks":3,"Yaks":1},
+{"Animals":"Dumbo Octopus","Xaks":3,"Yaks":1},
+{"Animals":"Blue Jay","Xaks":4,"Yaks":1},
+{"Animals":"Fence Lizard","Xaks":4,"Yaks":1},
+{"Animals":"Golden Hamster","Xaks":4,"Yaks":1},
+{"Animals":"House Mouse","Xaks":4,"Yaks":1},
+{"Animals":"Mouse","Xaks":4,"Yaks":1},
+{"Animals":"Nightingale","Xaks":4,"Yaks":1},
+{"Animals":"Norwegian Rat","Xaks":4,"Yaks":1},
+{"Animals":"Bee (Queen)","Xaks":5,"Yaks":1},
+{"Animals":"Gerbil","Xaks":5,"Yaks":1},
+{"Animals":"Garter Snake","Xaks":6,"Yaks":1},
+{"Animals":"Gouldian Finch","Xaks":6,"Yaks":1},
+{"Animals":"Leopard Frog","Xaks":6,"Yaks":1},
+{"Animals":"Muscrat","Xaks":6,"Yaks":1},
+{"Animals":"Quail","Xaks":6,"Yaks":1},
+{"Animals":"Toucan","Xaks":6,"Yaks":1},
+{"Animals":"Newt","Xaks":7,"Yaks":1},
+{"Animals":"Red Eared Turtle","Xaks":7,"Yaks":1},
+{"Animals":"Tasmanian Tiger","Xaks":7,"Yaks":1},
+{"Animals":"Guinea Pig","Xaks":8,"Yaks":1},
+{"Animals":"Humming Bird","Xaks":8,"Yaks":1},
+{"Animals":"Koala","Xaks":8,"Yaks":1},
+{"Animals":"Mynah","Xaks":8,"Yaks":1},
+{"Animals":"Opossum","Xaks":8,"Yaks":1},
+{"Animals":"Kangaroo","Xaks":9,"Yaks":1},
+{"Animals":"Mudpuppy","Xaks":9,"Yaks":1},
+{"Animals":"Rabbit","Xaks":9,"Yaks":1},
+{"Animals":"Titmouse","Xaks":9,"Yaks":1},
+{"Animals":"Cottontail","Xaks":10,"Yaks":1},
+{"Animals":"Green Frog","Xaks":10,"Yaks":1},
+{"Animals":"Grouse","Xaks":10,"Yaks":1},
+{"Animals":"Hare","Xaks":10,"Yaks":1},
+{"Animals":"Platypus","Xaks":10,"Yaks":1},
+{"Animals":"Prarie Dog","Xaks":10,"Yaks":1},
+{"Animals":"Painted Turtle","Xaks":11,"Yaks":1},
+{"Animals":"Pigeon","Xaks":11,"Yaks":1},
+{"Animals":"Pronghorn","Xaks":11,"Yaks":1},
+{"Animals":"Swan","Xaks":11,"Yaks":1},
+{"Animals":"Tiger Salamander","Xaks":11,"Yaks":1},
+{"Animals":"Capybara","Xaks":12,"Yaks":1},
+{"Animals":"Chipmunk","Xaks":12,"Yaks":1},
+{"Animals":"Ferret","Xaks":12,"Yaks":1},
+{"Animals":"Mongoose","Xaks":12,"Yaks":1},
+{"Animals":"Civet","Xaks":13,"Yaks":1},
+{"Animals":"Flying Squirrel","Xaks":14,"Yaks":1},
+{"Animals":"Fox","Xaks":14,"Yaks":1},
+{"Animals":"Lemur","Xaks":14,"Yaks":1},
+{"Animals":"Sea Lion","Xaks":14,"Yaks":1},
+{"Animals":"Tree Frog","Xaks":14,"Yaks":1},
+{"Animals":"American Toad","Xaks":15,"Yaks":1},
+{"Animals":"Angleworm","Xaks":15,"Yaks":1},
+{"Animals":"Armadillo","Xaks":15,"Yaks":1},
+{"Animals":"Cat","Xaks":15,"Yaks":1},
+{"Animals":"Chicken","Xaks":15,"Yaks":1},
+{"Animals":"Goat","Xaks":15,"Yaks":1},
+{"Animals":"Grey Cheeked Parrot","Xaks":15,"Yaks":1},
+{"Animals":"Nutria","Xaks":15,"Yaks":1},
+{"Animals":"Pionus Parrot","Xaks":15,"Yaks":1},
+{"Animals":"Rainbow Lorikeet","Xaks":15,"Yaks":1},
+{"Animals":"Rosella","Xaks":15,"Yaks":1},
+{"Animals":"Sheep","Xaks":15,"Yaks":1},
+{"Animals":"South African Clawed Toad","Xaks":15,"Yaks":1},
+{"Animals":"Whistling Duck","Xaks":15,"Yaks":1},
+{"Animals":"Wombat","Xaks":15,"Yaks":1},
+{"Animals":"Woodchuck","Xaks":15,"Yaks":1},
+{"Animals":"Bull Frog","Xaks":16,"Yaks":1},
+{"Animals":"Squirrel","Xaks":16,"Yaks":1},
+{"Animals":"Cicada","Xaks":17,"Yaks":1},
+{"Animals":"Common Goldeneye","Xaks":17,"Yaks":1},
+{"Animals":"Dog","Xaks":17,"Yaks":1},
+{"Animals":"Leopard","Xaks":17,"Yaks":1},
+{"Animals":"Redhead Duck ","Xaks":17,"Yaks":1},
+{"Animals":"Zebra Finch ","Xaks":17,"Yaks":1},
+{"Animals":"Binturong","Xaks":18,"Yaks":1},
+{"Animals":"Blackbird","Xaks":18,"Yaks":1},
+{"Animals":"Budgerigar","Xaks":18,"Yaks":1},
+{"Animals":"Bull Snake","Xaks":18,"Yaks":1},
+{"Animals":"Hog","Xaks":18,"Yaks":1},
+{"Animals":"Pheasant","Xaks":18,"Yaks":1},
+{"Animals":"Turkey Buzzard","Xaks":18,"Yaks":1},
+{"Animals":"Wolf","Xaks":18,"Yaks":1},
+{"Animals":"Canvasback Duck","Xaks":19,"Yaks":1},
+{"Animals":"Beaver","Xaks":20,"Yaks":1},
+{"Animals":"Bottlenose Dolphin","Xaks":20,"Yaks":1},
+{"Animals":"Canary","Xaks":20,"Yaks":1},
+{"Animals":"Chinchilla","Xaks":20,"Yaks":1},
+{"Animals":"Eclectus Parrot","Xaks":20,"Yaks":1},
+{"Animals":"Gorilla","Xaks":20,"Yaks":1},
+{"Animals":"Grey Squirrel","Xaks":20,"Yaks":1},
+{"Animals":"Mallard","Xaks":20,"Yaks":1},
+{"Animals":"Mountain Lion","Xaks":20,"Yaks":1},
+{"Animals":"Ox","Xaks":20,"Yaks":1},
+{"Animals":"Pea Fowl","Xaks":20,"Yaks":1},
+{"Animals":"Polar Bear","Xaks":20,"Yaks":1},
+{"Animals":"Porcupine","Xaks":20,"Yaks":1},
+{"Animals":"Red Panda","Xaks":20,"Yaks":1},
+{"Animals":"Teal","Xaks":20,"Yaks":1},
+{"Animals":"Cottonmouth Mocassin","Xaks":21,"Yaks":1},
+{"Animals":"Cow","Xaks":22,"Yaks":1},
+{"Animals":"Elk","Xaks":22,"Yaks":1},
+{"Animals":"Large Dog","Xaks":22,"Yaks":1},
+{"Animals":"Rattlesnake","Xaks":22,"Yaks":1},
+{"Animals":"Tiger","Xaks":22,"Yaks":1},
+{"Animals":"Boa Constrictor","Xaks":23,"Yaks":1},
+{"Animals":"English Sparrow","Xaks":23,"Yaks":1},
+{"Animals":"Rat Snake","Xaks":23,"Yaks":1},
+{"Animals":"Bat","Xaks":24,"Yaks":1},
+{"Animals":"Honey Badger","Xaks":24,"Yaks":1},
+{"Animals":"Conure","Xaks":25,"Yaks":1},
+{"Animals":"Wild Pig","Xaks":25,"Yaks":1},
+{"Animals":"Domestic Pigeon","Xaks":26,"Yaks":1},
+{"Animals":"Galah","Xaks":26,"Yaks":1},
+{"Animals":"Congo Eel","Xaks":27,"Yaks":1},
+{"Animals":"Bull","Xaks":28,"Yaks":1},
+{"Animals":"Caiman","Xaks":28,"Yaks":1},
+{"Animals":"Cobra","Xaks":28,"Yaks":1},
+{"Animals":"Egyptian Goose","Xaks":28,"Yaks":1},
+{"Animals":"Giraffe","Xaks":28,"Yaks":1},
+{"Animals":"Hellbender","Xaks":29,"Yaks":1},
+{"Animals":"Bison","Xaks":30,"Yaks":1},
+{"Animals":"Tapir","Xaks":30,"Yaks":1},
+{"Animals":"Naked Mole Rat","Xaks":31,"Yaks":1},
+{"Animals":"Cockatiel","Xaks":32,"Yaks":1},
+{"Animals":"Grizzly Bear","Xaks":32,"Yaks":1},
+{"Animals":"Canada Goose","Xaks":33,"Yaks":1},
+{"Animals":"Trumpeter Swan","Xaks":33,"Yaks":1},
+{"Animals":"Deer","Xaks":35,"Yaks":1},
+{"Animals":"Lion","Xaks":35,"Yaks":1},
+{"Animals":"Superb Parrot","Xaks":36,"Yaks":1},
+{"Animals":"Toad","Xaks":36,"Yaks":1},
+{"Animals":"Asian Elephant","Xaks":40,"Yaks":1},
+{"Animals":"Bare Eyed Cockatoo","Xaks":40,"Yaks":1},
+{"Animals":"Bear","Xaks":40,"Yaks":1},
+{"Animals":"Chimpanzee","Xaks":40,"Yaks":1},
+{"Animals":"Horse","Xaks":40,"Yaks":1},
+{"Animals":"Rhinoceros","Xaks":40,"Yaks":1},
+{"Animals":"Sulphur Crested Cockatoo","Xaks":40,"Yaks":1},
+{"Animals":"Crocodile","Xaks":45,"Yaks":1},
+{"Animals":"Donkey","Xaks":45,"Yaks":1},
+{"Animals":"Hippopotamus","Xaks":45,"Yaks":1},
+{"Animals":"African Grey Parrot","Xaks":50,"Yaks":1},
+{"Animals":"Camel","Xaks":50,"Yaks":1},
+{"Animals":"Lobster","Xaks":50,"Yaks":1},
+{"Animals":"Macaw","Xaks":50,"Yaks":1},
+{"Animals":"Eagle","Xaks":55,"Yaks":1},
+{"Animals":"Eel","Xaks":55,"Yaks":1},
+{"Animals":"Giant Salamander","Xaks":55,"Yaks":1},
+{"Animals":"Lake Sturgeon","Xaks":55,"Yaks":1},
+{"Animals":"American Alligator","Xaks":56,"Yaks":1},
+{"Animals":"Snapping Turtle","Xaks":57,"Yaks":1},
+{"Animals":"Catfish","Xaks":60,"Yaks":1},
+{"Animals":"Tutara Lizard","Xaks":60,"Yaks":1},
+{"Animals":"Alligator","Xaks":68,"Yaks":1},
+{"Animals":"Great Horned Owl","Xaks":68,"Yaks":1},
+{"Animals":"Elephant","Xaks":70,"Yaks":1},
+{"Animals":"Human","Xaks":70,"Yaks":1},
+{"Animals":"Sperm Whale","Xaks":70,"Yaks":1},
+{"Animals":"Amazon Parrot","Xaks":80,"Yaks":1},
+{"Animals":"Parrot","Xaks":80,"Yaks":1},
+{"Animals":"Killer Whale","Xaks":90,"Yaks":1},
+{"Animals":"Carp","Xaks":100,"Yaks":1},
+{"Animals":"Condor Vulture","Xaks":100,"Yaks":1},
+{"Animals":"Japanese Spider Crab","Xaks":100,"Yaks":1},
+{"Animals":"American Box Turtle","Xaks":123,"Yaks":1},
+{"Animals":"Box Turtle","Xaks":123,"Yaks":1},
+{"Animals":"Orange Roughy","Xaks":125,"Yaks":1},
+{"Animals":"Galapagos Land Tortoise","Xaks":150,"Yaks":1},
+{"Animals":"Koi Fish","Xaks":150,"Yaks":1},
+{"Animals":"Shortraker Rockfish","Xaks":150,"Yaks":1},
+{"Animals":"Bowhead Whale","Xaks":200,"Yaks":1},
+{"Animals":"Red Sea Urchin","Xaks":200,"Yaks":1},
+{"Animals":"Rougheye Rockfish","Xaks":200,"Yaks":1},
+{"Animals":"Ocean Quahog Clam","Xaks":410,"Yaks":1}
+];
+
+var w = 10500;
+var h1 = 400;
+var h = 600;
+
+var RNumb = 0;
+
+//SVG I LINIJA
+var line = d3.svg.line()
+	.x(function(d){return d.Xaks*25})
+	.y(function(d){return h1+d.Yaks})
+	.interpolate("linear");
+
+var svg = d3.select("body")
+	.append("svg")
+	.attr({
+		"width":w,
+		"height":h
+	})
+//PATH LINIJE
+var path = svg.append("path")
+	.attr({
+		d:line(AnimalDataBase),
+		"fill":"none",
+		"stroke-width":"5",
+		"stroke":"rgb(49, 89, 129)"
+
+	})
+
+//ISPISIVANJE GODINA
+var label = svg.selectAll("text")
+	.data(AnimalDataBase)
+	.enter()
+	.append("text")
+	.text(function(d){return SeeIfItIsFive(d.Xaks)})
+	.attr({
+		x:(function(d){return d.Xaks*25 - 8}),
+		y:(function(d){return h1+d.Yaks+24})
+	})
+
+//TOCKE (KRUŽNICE)
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+
+var div2 = d3.select("body").append("div")   
+    .attr("class", "under")
+
+svg.selectAll("dot")	
+        .data(AnimalDataBase)			
+    	.enter().append("circle")							
+        .attr("r", 8)		
+        .attr({
+			cx:(function(d){return d.Xaks*25}),
+			cy:(function(d){return h1+d.Yaks})//++50 za spustit ispod crte
+		})	
+        .on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html(GetListFunk(d.Xaks))// + "<br/>"
+                .style("left", (d.Xaks*25 - 30) + "px")	
+                .style("top", (350 - MoveUpPx(d.Xaks)*15) + "px");
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        })//----KAD SE KLIKNE TOCKA
+        .on("click", function(d) {      
+            div2.transition()        
+                .duration(200)
+            div2.html(CreatePieChart(false))
+            div2.html(CreatePieChart2(false))
+            div2.html(CreatePieChart3(false))
+            div2.html(GetListFunk2(d.Xaks))//+ "<br/>"
+                .style ("display", "block")
+                .style("left", (d.Xaks*25 - 24) + "px") 
+                .style("top", (400 + 85) + "px")
+                .style("text-align", "left");
+            });
+
+
+//tipka za PIECHART1
+svg.append("circle")
+    .attr("cx",35)
+    .attr("cy",h1 + 50)
+    .attr("r","12")
+    .attr("style","stroke:rgb(15, 39, 61); stroke-width:4; fill:rgb(67, 114, 160);")
+    .on("mouseover", function(d){      
+            div.transition()        
+                .duration(200)      
+                .style("opacity", .9);      
+            div.html(TekstPrint(1))
+                .style("left", (15) + "px")
+                .style("top", (480) + "px");
+        })
+    .on("mouseout", function(d) {       
+            div.transition()        
+                .duration(500)      
+                .style("opacity", 0);   
+        })
+    .on("click", function(d) {      
+        div2.transition()        
+            .duration(200)
+        div2.html(CreatePieChart2(false))
+        div2.html(CreatePieChart3(false))
+        div2.html(CreatePieChart(true))
+            .style ("display", "block")
+            .style("left", (140) + "px")  
+            .style("top", (540) + "px")
+            .style("text-align", "center");
+        });
+
+//tipka za piechart 2
+svg.append("circle")
+    .attr("cx",75)
+    .attr("cy",h1 + 50)
+    .attr("r","12")
+    .attr("style","stroke:rgb(15, 39, 61); stroke-width:4; fill:rgb(67, 114, 160);")
+    .on("mouseover", function(d){      
+            div.transition()        
+                .duration(200)      
+                .style("opacity", .9);      
+            div.html(TekstPrint(2))
+                .style("left", (15) + "px")
+                .style("top", (480) + "px");
+        })
+    .on("mouseout", function(d) {       
+            div.transition()        
+                .duration(500)      
+                .style("opacity", 0);   
+        })
+    .on("click", function(d) {      
+        div2.transition()        
+            .duration(200)
+        div2.html(CreatePieChart3(false))
+        div2.html(CreatePieChart(false))
+        div2.html(CreatePieChart2(true))
+            .style ("display", "block")
+            .style("left", (140) + "px")  
+            .style("top", (540) + "px")
+            .style("text-align", "center");
+        });
+
+
+//tipka za piechart 3
+svg.append("circle")
+    .attr("cx",115)
+    .attr("cy",h1 + 50)
+    .attr("r","12")
+    .attr("style","stroke:rgb(15, 39, 61); stroke-width:4; fill:rgb(67, 114, 160);")
+    .on("mouseover", function(d){      
+            div.transition()        
+                .duration(200)      
+                .style("opacity", .9);      
+            div.html(TekstPrint(3))
+                .style("left", (15) + "px")
+                .style("top", (480) + "px");
+        })
+    .on("mouseout", function(d) {       
+            div.transition()        
+                .duration(500)      
+                .style("opacity", 0);   
+        })
+    .on("click", function(d) {      
+        div2.transition()        
+            .duration(200)
+        div2.html(CreatePieChart(false))
+        div2.html(CreatePieChart2(false))
+        div2.html(CreatePieChart3(true))
+            .style ("display", "block")
+            .style("left", (140) + "px")  
+            .style("top", (540) + "px")
+            .style("text-align", "center");
+        });
+
+//SLIKA------------------------
+
+d3.selectAll('svg')
+  .append('image')
+  .attr('xlink:href','Pictures/Lenta.png')
+  .attr('class', 'picture')
+  .attr('height', '360')
+  .attr('width', '10500')
+  //odmicanje od ruba
+  .attr('x', '0')
+  .attr('y', '32')
+
+
+
+var SvgCheck = false;
+var SvgCheck2 = false;
+var SvgCheck3 = false;
+
+//NOVI SVG
+var NSvg = d3.select("body")
+    .append("svg")
+    .attr({
+        "width":500,
+        "height":500
+    })
+
+//PRVA PIECHART FUNKCIJA--------------------------
+function CreatePieChart(masterChecker){
+    if (masterChecker == false){
+        SvgCheck = true;
+    }
+    if (SvgCheck== false){
+
+        NSvg.selectAll("*").remove();
+
+        var data = [
+            {name: 'Mammals', value: 45},//
+            {name: 'Birds', value: 29},//
+            {name: 'Reptiles', value: 62},//
+            {name: 'Amphibians', value: 18},//vodozemci
+            {name: 'Fishes', value: 78},//
+            {name: 'Insects', value: 6},//beskralježnjaci svi dolje:
+            {name: 'Arachnids', value: 11},//paučnjaci
+            {name: 'Crustaceans', value: 30},//rakovi
+            {name: 'Mollusks', value: 22}, //mekušci
+            {name: 'Worms', value: 9}//kolutičavci
+            ];
+
+        var outerRadius = 100;
+        var innerRadius = 50;
+
+        
+        var arc = d3.svg.arc()
+            .innerRadius(innerRadius)
+            .outerRadius(outerRadius);
+
+
+        var pie = d3.layout.pie()
+            .value(function(d) { return d.value; });
+
+        var pieArcs = NSvg.selectAll("g.pie")
+            .data(pie(data))
+            .enter()
+            .append("g")
+            .attr("class", "pie")
+            .attr("transform", "translate(" + (250) + ", " + (250) + ")")
+            
+
+        pieArcs.append("path")
+            .attr("fill", function(d,i) { return Colore(i); })
+            .attr("stroke", "#001133")
+            .attr("stroke-width", 2)
+            .attr("opacity", 0.75)
+            .attr("d", arc);
+
+        var labelArc = d3.svg.arc()
+          .innerRadius(outerRadius)
+          .outerRadius(outerRadius+120);
+
+        pieArcs.append("text")
+            .attr("transform", function(d) { 
+                  var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
+                  if ((d.endAngle+d.startAngle)/2 > Math.PI){
+                    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
+                  }
+                  else{
+                    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")"; 
+                  }
+                })
+                .attr("dy", ".35em")
+              .attr("text-anchor", "middle")
+              .attr("text-align", "middle")
+              .text(function(d) { return d.data.name + ": " + d.data.value;}
+            );
+    }
+    else{
+        NSvg.selectAll("*").remove();
+    }
+
+
+    //promjena stanja i return
+    var ab = "";
+    if (SvgCheck==false){
+        SvgCheck = true
+        ab = "Average life span of animal species";
+    }
+    else {
+        SvgCheck = false
+        ab = "Pie chart closed";
+    }
+
+    
+    return ab;
+    
+}
+
+
+//DRUGA PIECHART FUNKCIJA------------------------
+function CreatePieChart2(masterChecker2){
+    if (masterChecker2 == false){
+        SvgCheck2 = true;
+    }
+    if (SvgCheck2 == false){
+
+        NSvg.selectAll("*").remove();
+
+        var data = [//kralješnjaci
+            {name: 'Mammals', value: 5513, valuep: "5,513"},
+            {name: 'Birds', value: 10425, valuep: "10,425"},
+            {name: 'Reptiles', value: 10038, valuep: "10,038"},
+            {name: 'Amphibians', value: 7302, valuep: "7,302"},//vodozemci
+            {name: 'Fishes', value: 32900, valuep: "32,900"}
+            ];
+
+        var outerRadius = 100;
+        var innerRadius = 50;
+
+        
+        var arc = d3.svg.arc()
+            .innerRadius(innerRadius)
+            .outerRadius(outerRadius);
+
+
+        var pie = d3.layout.pie()
+            .value(function(d) { return d.value; });
+
+        var pieArcs = NSvg.selectAll("g.pie")
+            .data(pie(data))
+            .enter()
+            .append("g")
+            .attr("class", "pie")
+            .attr("transform", "translate(" + (250) + ", " + (250) + ")")
+            
+
+        pieArcs.append("path")
+            .attr("fill", function(d,i) { return Colore(i); })
+            .attr("stroke", "#001133")
+            .attr("stroke-width", 2)
+            .attr("opacity", 0.75)
+            .attr("d", arc);
+
+        var labelArc = d3.svg.arc()
+          .innerRadius(outerRadius)
+          .outerRadius(outerRadius+135);
+
+        pieArcs.append("text")
+            .attr("transform", function(d) { 
+                  var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
+                  if ((d.endAngle+d.startAngle)/2 > Math.PI){
+                    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
+                  }
+                  else{
+                    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")"; 
+                  }
+                })
+                .attr("dy", ".35em")
+              .attr("text-anchor", "middle")
+              .attr("text-align", "middle")
+              .text(function(d) { return d.data.name + ": " + d.data.valuep;
+            });
+    }
+    else{
+        NSvg.selectAll("*").remove();
+    }
+
+
+    //promjena stanja i return
+    var ab = "";
+    if (SvgCheck2 == false){
+        SvgCheck2 = true
+        ab = "Number of vertebrates species by subgroup";
+    }
+    else {
+        SvgCheck2 = false
+        ab = "Pie chart closed";
+    }
+
+    
+    return ab;
+    
+}
+
+
+//TRECA PIECHART FUNKCIJA-----------------------------------
+function CreatePieChart3(masterChecker3){
+    if (masterChecker3 == false){
+        SvgCheck3 = true;
+    }
+    if (SvgCheck3 == false){
+
+        NSvg.selectAll("*").remove();
+
+        var data = [//beskralješnjaci
+            {name: 'Insects', value: 1000000, valuep: "1,000,000"},//insekti
+            {name: 'Arachnids', value: 102248, valuep: "102,248"},//paučnjaci
+            {name: 'Crustaceans', value: 47000, valuep: "47,000"},//rakovi
+            {name: 'Mollusks', value: 85000, valuep: "85,000"}, //mekušci
+            {name: 'Worms', value: 165, valuep: "165"}//kolutičavci  
+            ];
+
+        var outerRadius = 100;
+        var innerRadius = 50;
+
+        
+        var arc = d3.svg.arc()
+            .innerRadius(innerRadius)
+            .outerRadius(outerRadius);
+
+
+        var pie = d3.layout.pie()
+            .value(function(d) { return d.value; });
+
+        var pieArcs = NSvg.selectAll("g.pie")
+            .data(pie(data))
+            .enter()
+            .append("g")
+            .attr("class", "pie")
+            .attr("transform", "translate(" + (250) + ", " + (250) + ")")
+            
+
+        pieArcs.append("path")
+            .attr("fill", function(d,i) { return Colore(i); })
+            .attr("stroke", "#001133")
+            .attr("stroke-width", 2)
+            .attr("opacity", 0.75)
+            .attr("d", arc);
+
+        var labelArc = d3.svg.arc()
+          .innerRadius(outerRadius)
+          .outerRadius(outerRadius+145);
+
+        pieArcs.append("text")
+            .attr("transform", function(d) { 
+                  var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
+                  if ((d.endAngle+d.startAngle)/2 > Math.PI){
+                    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
+                  }
+                  else{
+                    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(90) rotate(" + (midAngle * 180/Math.PI) + ")"; 
+                  }
+                })
+                .attr("dy", ".35em")
+              .attr("text-anchor", "middle")
+              .attr("text-align", "middle")
+              .text(function(d) { return d.data.name + ": " + d.data.valuep;
+            });
+    }
+    else{
+        NSvg.selectAll("*").remove();
+    }
+
+
+    //promjena stanja i return
+    var ab = "";
+    if (SvgCheck3 == false){
+        SvgCheck3 = true
+        ab = "Number of invertebrates species by subgroup";
+    }
+    else {
+        SvgCheck3 = false
+        ab = "Pie chart closed";
+    }
+
+    
+    return ab;
+    
+}
+
+//BOJANJE GRAFOVA
+function Colore(i){
+    var allColores = ["#004080","#0059b3","#0073e6","#1a8cff","#4da6ff","#80bfff","#b3d9ff","#80bfff","#003366", "#2d5986", "#79a6d2"];
+    return allColores[i];
+}
+
+//STRING PRILIKOM MOUSEOVERA
+function GetListFunk(age) {
+	var str1 = "";
+	var str2 = "<br/>";
+	
+	for(var i=0; i<AnimalDataBase.length; i++){
+		if(AnimalDataBase[i].Xaks == age){
+			var str1 = str1.concat(AnimalDataBase[i].Animals);
+			var str1 = str1.concat(str2);
+		}
+	}
+    return str1;
+}
+
+//PROVJERA DALI JE BROJ DJELJIV SA 5
+function SeeIfItIsFive(age) {
+    var str1 = "";
+
+    if(age% 5 == 0 || age == 1){
+        if (age == RNumb){
+            return str1;
+        }
+        RNumb = age;
+        return RNumb;
+    }
+    else{
+        return str1;
+    }
+
+}
+
+//STRING PRILIKOM KLIKA MIŠA
+function GetListFunk2(age) {
+    var str1 = "Life span of " + age + " years:";
+    var str2 = "<br/>";
+    
+    var str1 = str1.concat(str2);
+    for(var i=0; i<AnimalDataBase.length; i++){
+        if(AnimalDataBase[i].Xaks == age){
+            var str1 = str1.concat(str2);
+            var str1 = str1.concat(AnimalDataBase[i].Animals);
+        }
+    }
+    return str1;
+}
+
+//POMICANJE TOOLTIPA GORE S OBZIROM NA KOLICINU TEKSTA
+function MoveUpPx(age) {
+    var C = 0;
+    
+    for(var i=0; i<AnimalDataBase.length; i++){
+        if(AnimalDataBase[i].Xaks == age){
+            C = C+1;
+        }
+    }
+    return C;
+}
+
+//ISPIS TEKSTA KOD GRAFOVA
+function TekstPrint(number){
+    var ab;
+    if (number == 1){
+        ab = "Click to show pie chart <br/>of average animal life <br/>span sorted by species"
+    }else if (number == 2) {
+        ab = "Click to show pie chart <br/>of a number of vertebrates <br/>by subgroup"
+    }
+    else{
+        ab = "Click to show pie chart <br/>of a number of invertebrates<br/>by subgroup"
+    }
+    return ab;
+}
+
+</script>
+</body>
+</html>
